@@ -16,32 +16,39 @@ namespace XboneInterface
         private Gamepad gamepad;
 
         private List<KeyValuePair<Button, bool>> statearray;
+
         public enum DPad
         {
-            DPadUp = 6,
-            DPadDown = 7,
-            DPadLeft = 8,
-            DPadRight = 9,
+            DPadUp,
+            DPadDown,
+            DPadLeft,
+            DPadRight,
         }
         public enum Button
         {
-            BumperLeft = 3,
-            BumperRight = 4,
-            JoystickLeft = 5, 
-            X = 10,
-            Y = 11,
-            A = 12,
-            B = 13,
-            Xbox = 14,
-            View = 15,
-            Menu = 16
+            BumperLeft,
+            BumperRight,
+            JoystickLeft, 
+            X,
+            Y,
+            A,
+            B,
+            Xbox,
+            View,
+            Menu
+        }
+
+        public enum Thumbs
+        {
+            ThumbLeft,
+            ThumbRight
         }
 
         public enum Triggers {
-            TriggerLeft = 1,
-            TriggerRight = 2
-            
+            TriggerLeft,
+            TriggerRight 
         }
+
         private bool connected = false;
         private readonly int deadzone = 2500;
 
@@ -77,16 +84,6 @@ namespace XboneInterface
 
         }
 
-        private void UpdateGetState()
-        {
-
-        }
-
-        public void GetState(string bind)
-        {
-
-        }
-
         public bool GetDPad(DPad dir)
         {
             string Data = controller.GetState().Gamepad.Buttons.ToString();
@@ -94,6 +91,7 @@ namespace XboneInterface
             Console.WriteLine(dir.ToString());
             return (Data == dir.ToString());
         }
+
         public float GetTrigger(Triggers Trig)
         {
             int m_TrigVal;
@@ -108,6 +106,17 @@ namespace XboneInterface
                     throw new System.ArgumentException("Passed value is not an acceptable parameter; please use 'leftTrigger' or 'rightTrigger'", "original");
             }
             return m_TrigVal / 255.0f; // Ensures this function returns a value between 0 and 1
+        }
+
+        public Point GetAxis(Thumbs thumb)
+        {
+            switch (thumb)
+            {
+                case Thumbs.ThumbLeft:
+                    return;
+                break;
+            }
+
         }
 
     }

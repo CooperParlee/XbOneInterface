@@ -15,10 +15,25 @@ namespace XboneInterface
         private Controller controller;
         private Gamepad gamepad;
 
-        private List<KeyValuePair<string, bool>> statearray;
-
-        private readonly string[] buttons = {"BumperLeft", "BumperRight", "JoystickLeft", "JoystickRight", "DPadDown", "DPadUp", "DPadLeft", "DPadRight", "X", "Y", "A", "B", "Xbox", "View", "Menu"};
-        public enum triggers {
+        private List<KeyValuePair<Button, bool>> statearray;
+        public enum Button
+        {
+            BumperLeft = 3,
+            BumperRight = 4,
+            JoystickLeft = 5, 
+            DPadUp = 6,
+            DPadDown = 7,
+            DPadLeft = 8,
+            DPadRight = 9,
+            X = 10,
+            Y = 11,
+            A = 12,
+            B = 13,
+            Xbox = 14,
+            View = 15,
+            Menu = 16
+        }
+        public enum Triggers {
             TriggerLeft = 1,
             TriggerRight = 2
             
@@ -35,12 +50,13 @@ namespace XboneInterface
             connected = controller.IsConnected;
 
 
-            statearray = new List<KeyValuePair<string, bool>>();
-
-            foreach(string str in buttons)
+            statearray = new List<KeyValuePair<Button, bool>>();
+            /*
+            foreach(Button str in Button)
             {
-                statearray.Add(new KeyValuePair<string, bool>(str, false));
+                statearray.Add(new KeyValuePair<Button, bool>(str, false));
             }
+            */
         }
         public void Update()
         {
@@ -50,10 +66,10 @@ namespace XboneInterface
                 return;
 
             gamepad = controller.GetState().Gamepad;
-            Console.WriteLine(GetTrigger(triggers.TriggerLeft));
+            Console.WriteLine(GetTrigger(Triggers.TriggerLeft));
 
-            leftTrigger = GetTrigger(triggers.TriggerLeft);
-            rightTrigger = GetTrigger(triggers.TriggerRight);
+            leftTrigger = GetTrigger(Triggers.TriggerLeft);
+            rightTrigger = GetTrigger(Triggers.TriggerRight);
             
 
         }
@@ -68,14 +84,14 @@ namespace XboneInterface
 
         }
 
-        public float GetTrigger(triggers Trig)
+        public float GetTrigger(Triggers Trig)
         {
             int m_TrigVal;
             switch (Trig) {
-                case triggers.TriggerLeft:
+                case Triggers.TriggerLeft:
                     m_TrigVal = gamepad.LeftTrigger;
                 break;
-                case triggers.TriggerRight:
+                case Triggers.TriggerRight:
                     m_TrigVal = gamepad.RightTrigger;
                 break;
                 default:

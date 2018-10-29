@@ -16,15 +16,18 @@ namespace XboneInterface
         private Gamepad gamepad;
 
         private List<KeyValuePair<Button, bool>> statearray;
+        public enum DPad
+        {
+            DPadUp = 6,
+            DPadDown = 7,
+            DPadLeft = 8,
+            DPadRight = 9,
+        }
         public enum Button
         {
             BumperLeft = 3,
             BumperRight = 4,
             JoystickLeft = 5, 
-            DPadUp = 6,
-            DPadDown = 7,
-            DPadLeft = 8,
-            DPadRight = 9,
             X = 10,
             Y = 11,
             A = 12,
@@ -33,6 +36,7 @@ namespace XboneInterface
             View = 15,
             Menu = 16
         }
+
         public enum Triggers {
             TriggerLeft = 1,
             TriggerRight = 2
@@ -49,14 +53,13 @@ namespace XboneInterface
             controller = new Controller(id);
             connected = controller.IsConnected;
 
-
             statearray = new List<KeyValuePair<Button, bool>>();
-            /*
-            foreach(Button str in Button)
+            
+            foreach(Button button in Enum.GetValues(typeof(Button)))
             {
-                statearray.Add(new KeyValuePair<Button, bool>(str, false));
+                statearray.Add(new KeyValuePair<Button, bool>(button, false));
             }
-            */
+            
         }
         public void Update()
         {
@@ -66,8 +69,8 @@ namespace XboneInterface
                 return;
 
             gamepad = controller.GetState().Gamepad;
-            Console.WriteLine(GetTrigger(Triggers.TriggerLeft));
-
+            //Console.WriteLine(GetTrigger(Triggers.TriggerLeft));
+            Console.WriteLine(GetDPad(DPad.DPadLeft));
             leftTrigger = GetTrigger(Triggers.TriggerLeft);
             rightTrigger = GetTrigger(Triggers.TriggerRight);
             
@@ -84,6 +87,13 @@ namespace XboneInterface
 
         }
 
+        public bool GetDPad(DPad dir)
+        {
+            string Data = controller.GetState().Gamepad.Buttons.ToString();
+
+            Console.WriteLine(dir.ToString());
+            return (Data == dir.ToString());
+        }
         public float GetTrigger(Triggers Trig)
         {
             int m_TrigVal;

@@ -16,12 +16,12 @@ namespace Xbox_One_Interface
 
         private static Timer timer;
         private static readonly double HERTZ = 50;
-        /*
+        
         private static void Update(object source, ElapsedEventArgs args)
         {
-            
+            xbox.Update();
         }
-        */
+        
         static void Main()
         {
             Console.WriteLine("Run speed: " + HERTZ);

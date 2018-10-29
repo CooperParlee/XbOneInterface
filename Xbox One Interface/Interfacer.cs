@@ -43,10 +43,11 @@ namespace XboneInterface
                 statearray.Add(new KeyValuePair<string, bool>(str, false));
             }
         }
-        private void Update()
+        public void Update()
         {
             connected = controller.IsConnected;
             if (!connected)
+                
                 return;
 
             gamepad = controller.GetState().Gamepad;
@@ -81,7 +82,7 @@ namespace XboneInterface
                 default:
                     throw new System.ArgumentException("Passed value is not an acceptable parameter; please use 'leftTrigger' or 'rightTrigger'", "original");
             }
-            return m_TrigVal / 255; // Ensures this function returns a value between 0 and 1
+            return m_TrigVal / 255.0f; // Ensures this function returns a value between 0 and 1
         }
 
     }

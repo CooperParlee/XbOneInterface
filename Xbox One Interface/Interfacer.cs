@@ -18,17 +18,16 @@ namespace XboneInterface
         private List<KeyValuePair<string, bool>> statearray;
 
         private readonly string[] buttons = {"BumperLeft", "BumperRight", "JoystickLeft", "JoystickRight", "DPadDown", "DPadUp", "DPadLeft", "DPadRight", "X", "Y", "A", "B", "Xbox", "View", "Menu"};
-
+        public enum triggers {
+            TriggerLeft = 1,
+            TriggerRight = 2
+            
+        }
         private bool connected = false;
         private readonly int deadzone = 2500;
 
         private Point leftThumb, rightThumb = new Point(0, 0);
         private float leftTrigger, rightTrigger;
-        
-        public float GetTrigger()
-        {
-            return 0.0f;
-        }
 
         public Interfacer(UserIndex id)
         {
@@ -51,10 +50,10 @@ namespace XboneInterface
                 return;
 
             gamepad = controller.GetState().Gamepad;
-            Console.WriteLine(GetTrigger("leftTrigger"));
+            Console.WriteLine(GetTrigger(triggers.TriggerLeft));
 
-            leftTrigger = GetTrigger("leftTrigger");
-            rightTrigger = GetTrigger("rightTrigger");
+            leftTrigger = GetTrigger(triggers.TriggerLeft);
+            rightTrigger = GetTrigger(triggers.TriggerRight);
             
 
         }
@@ -69,14 +68,14 @@ namespace XboneInterface
 
         }
 
-        public float GetTrigger(string trig)
+        public float GetTrigger(triggers Trig)
         {
             int m_TrigVal;
-            switch (trig) {
-                case "leftTrigger":
+            switch (Trig) {
+                case triggers.TriggerLeft:
                     m_TrigVal = gamepad.LeftTrigger;
                 break;
-                case "rightTrigger":
+                case triggers.TriggerRight:
                     m_TrigVal = gamepad.RightTrigger;
                 break;
                 default:

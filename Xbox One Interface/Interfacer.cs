@@ -50,7 +50,7 @@ namespace XboneInterface
         }
         private float xrange = 32768.0f;
         private float yrange = 32768.0f;
-
+        private float deadzone = 0.014f;
         private bool connected = false;
 
         public Interfacer(UserIndex id)
@@ -77,6 +77,10 @@ namespace XboneInterface
  
         }
 
+        public void RedefineDeadzone(float deadzone)
+        {
+            this.deadzone = deadzone;
+        }
         public void RedefineXRange(int NewMax)
         {
             xrange = NewMax;
@@ -114,10 +118,32 @@ namespace XboneInterface
             switch (thumb)
             {
                 case Thumbs.ThumbLeft:
-                    return new PointF(controller.GetState().Gamepad.LeftThumbX / xrange, controller.GetState().Gamepad.LeftThumbY / yrange);
+                    float xL = controller.GetState().Gamepad.LeftThumbX / xrange;
+                    float yL = controller.GetState().Gamepad.LeftThumbY / yrange;
+
+                    if (Math.Abs(xL) < deadzone)
+                    {
+                        xL = 0;
+                    }
+                    if (Math.Abs(yL) < deadzone)
+                    {
+                        yL = 0;
+                    }
+                    return new PointF(xL, yL);
                 break;
                 case Thumbs.ThumbRight:
-                    return new PointF(controller.GetState().Gamepad.RightThumbX / xrange, controller.GetState().Gamepad.RightThumbY / yrange);
+                    float xR = controller.GetState().Gamepad.RightThumbX / xrange;
+                    float yR = controller.GetState().Gamepad.RightThumbY / yrange;
+                    
+                    if(Math.Abs(xR) < deadzone)
+                    {
+                        xR = 0;
+                    }
+                    if (Math.Abs(yR) < deadzone)
+                    {
+                        yR = 0;
+                    }
+                    return new PointF(xR, yR);
                 break;
             }
             throw new System.ArgumentException("Passed value was not of either appropriate thumb type, please file a bug report on https://github.com/CooperParlee/XbOneInterface.", "original");

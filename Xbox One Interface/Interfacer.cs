@@ -52,8 +52,6 @@ namespace XboneInterface
         private float yrange = 32768.0f;
 
         private bool connected = false;
-        private readonly int deadzone = 2500;
-
 
         public Interfacer(UserIndex id)
         {

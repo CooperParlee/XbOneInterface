@@ -91,8 +91,8 @@ namespace XboneInterface
             if (!connected)
                 
                 return;
-            ButtonRecursive();
-            Console.WriteLine(GetAxis(Thumbs.ThumbRight));
+            IsButtonPressed(Button.A);
+            Console.WriteLine();
  
         }
 
@@ -171,9 +171,20 @@ namespace XboneInterface
         {
             foreach(KeyValuePair<Button, bool> button in buttonstatearray)
             {
-                Console.WriteLine(controller.GetState().Gamepad.Buttons.HasFlag(GamepadButtonFlags.A));
+                
             }
         }
+
+        public bool IsButtonPressed(Button button)
+        {
+            var pair = buttoncongruency.Find(x => x.Key == button);
+
+            if (controller.GetState().Gamepad.Buttons.HasFlag(pair.Value) == true){
+                return true;
+            }
+            return false;
+        }
+
         
 
     }

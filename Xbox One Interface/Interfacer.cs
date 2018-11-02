@@ -12,11 +12,6 @@ namespace XboneInterface
 {
     public class Interfacer
     {
-        private Controller controller;
-        private Gamepad gamepad;
-
-        private List<KeyValuePair<Button, bool>> statearray;
-
         public enum DPad
         {
             DPadUp,
@@ -28,12 +23,12 @@ namespace XboneInterface
         {
             BumperLeft,
             BumperRight,
-            JoystickLeft, 
+            JoystickLeft,
+            JoystickRight,
             X,
             Y,
             A,
             B,
-            Xbox,
             View,
             Menu
         }
@@ -44,10 +39,18 @@ namespace XboneInterface
             ThumbRight
         }
 
-        public enum Triggers {
+        public enum Triggers
+        {
             TriggerLeft,
-            TriggerRight 
+            TriggerRight
         }
+
+        private Controller controller;
+        private Gamepad gamepad;
+
+        //private List<KeyValuePair<Button, >>
+        private List<KeyValuePair<Button, bool>> buttonstatearray;
+        private List<KeyValuePair<Button, GamepadButtonFlags>> buttoncongruency;
         private float xrange = 32768.0f;
         private float yrange = 32768.0f;
         private float deadzone = 0.014f;
@@ -56,13 +59,29 @@ namespace XboneInterface
         public Interfacer(UserIndex id)
         {
             controller = new Controller(id);
+            gamepad = new Gamepad();
             connected = controller.IsConnected;
 
-            statearray = new List<KeyValuePair<Button, bool>>();
-            
-            foreach(Button button in Enum.GetValues(typeof(Button)))
+            buttonstatearray = new List<KeyValuePair<Button, bool>>();
+
+            buttoncongruency = new List<KeyValuePair<Button, GamepadButtonFlags>>
             {
-                statearray.Add(new KeyValuePair<Button, bool>(button, false));
+                new KeyValuePair<Button, GamepadButtonFlags>(Button.A, GamepadButtonFlags.A),
+                new KeyValuePair<Button, GamepadButtonFlags>(Button.BumperLeft, GamepadButtonFlags.LeftShoulder),
+                new KeyValuePair<Button, GamepadButtonFlags>(Button.BumperRight, GamepadButtonFlags.RightShoulder),
+                new KeyValuePair<Button, GamepadButtonFlags>(Button.JoystickLeft, GamepadButtonFlags.LeftThumb),
+                new KeyValuePair<Button, GamepadButtonFlags>(Button.JoystickRight, GamepadButtonFlags.RightThumb),
+                new KeyValuePair<Button, GamepadButtonFlags>(Button.X, GamepadButtonFlags.X),
+                new KeyValuePair<Button, GamepadButtonFlags>(Button.Y, GamepadButtonFlags.Y),
+                new KeyValuePair<Button, GamepadButtonFlags>(Button.A, GamepadButtonFlags.A),
+                new KeyValuePair<Button, GamepadButtonFlags>(Button.B, GamepadButtonFlags.B),
+                new KeyValuePair<Button, GamepadButtonFlags>(Button.View, GamepadButtonFlags.Back),
+                new KeyValuePair<Button, GamepadButtonFlags>(Button.Menu, GamepadButtonFlags.Start)
+            };
+
+            foreach (Button button in Enum.GetValues(typeof(Button)))
+            {
+                buttonstatearray.Add(new KeyValuePair<Button, bool>(button, false));
             }
             
         }
@@ -72,7 +91,7 @@ namespace XboneInterface
             if (!connected)
                 
                 return;
-
+            ButtonRecursive();
             Console.WriteLine(GetAxis(Thumbs.ThumbRight));
  
         }
@@ -146,8 +165,16 @@ namespace XboneInterface
                     return new PointF(xR, yR);
                 break;
             }
-            throw new System.ArgumentException("Passed value was not of either appropriate thumb type, please file a bug report on https://github.com/CooperParlee/XbOneInterface.", "original");
+            throw new System.ArgumentException("Passed value was not of either appropriate thumb type, could you perhaps have a special controller? Please file a issue report on https://github.com/CooperParlee/XbOneInterface.", "original");
         }
+        private void ButtonRecursive()
+        {
+            foreach(KeyValuePair<Button, bool> button in buttonstatearray)
+            {
+                Console.WriteLine(controller.GetState().Gamepad.Buttons.HasFlag(GamepadButtonFlags.A));
+            }
+        }
+        
 
     }
 }

@@ -8,6 +8,7 @@ using System.Drawing;
 
 
 
+
 namespace XboneInterface
 {
     public class Interfacer
@@ -47,6 +48,7 @@ namespace XboneInterface
 
         private Controller controller;
         private Gamepad gamepad;
+
 
         //private List<KeyValuePair<Button, >>
         private List<KeyValuePair<Button, bool>> buttonstatearray;
@@ -91,8 +93,7 @@ namespace XboneInterface
             if (!connected)
                 
                 return;
-            IsButtonPressed(Button.A);
-            Console.WriteLine();
+            
  
         }
 
@@ -167,12 +168,14 @@ namespace XboneInterface
             }
             throw new System.ArgumentException("Passed value was not of either appropriate thumb type, could you perhaps have a special controller? Please file a issue report on https://github.com/CooperParlee/XbOneInterface.", "original");
         }
-        private void ButtonRecursive()
+        public void SetVibration(float LeftMotor, float RightMotor)
         {
-            foreach(KeyValuePair<Button, bool> button in buttonstatearray)
-            {
-                
-            }
+            LeftMotor = Math.Max(-1, Math.Min(1, LeftMotor));
+            RightMotor = Math.Max(-1, Math.Min(1, RightMotor));
+            Vibration vibrationcharacteristics = new Vibration();
+            vibrationcharacteristics.LeftMotorSpeed = (ushort)(LeftMotor * 65535);
+            vibrationcharacteristics.RightMotorSpeed = (ushort)(RightMotor * 65535);
+            controller.SetVibration(vibrationcharacteristics);
         }
 
         public bool IsButtonPressed(Button button)

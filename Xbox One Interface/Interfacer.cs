@@ -13,6 +13,9 @@ namespace XboneInterface
 {
     public class Interfacer
     {
+        private Controller controller;
+        private Gamepad gamepad;
+
         //Enumerable types; use when calling buttons etc.
         public enum DPad
         {
@@ -41,22 +44,16 @@ namespace XboneInterface
             ThumbRight
         }
 
-        public enum Triggers
+        public enum Triggers //The left and right triggers found on the front of the controller.
         {
             TriggerLeft,
             TriggerRight
         }
-
-        private Controller controller;
-        private Gamepad gamepad;
-        private Random rand;
-
-        //private List<KeyValuePair<Button, >>
         private List<KeyValuePair<Button, bool>> buttonstatearray;
         private List<KeyValuePair<Button, GamepadButtonFlags>> buttoncongruency;
         private float xrange = 32768.0f;
         private float yrange = 32768.0f;
-        private float deadzone = 0.014f;
+        private float deadzone = 0.065f;
 
         private bool connected = false;
 
@@ -65,7 +62,6 @@ namespace XboneInterface
             controller = new Controller(id);
             gamepad = new Gamepad();
             connected = controller.IsConnected;
-            rand = new Random();
 
             buttonstatearray = new List<KeyValuePair<Button, bool>>();
 
@@ -96,8 +92,7 @@ namespace XboneInterface
             if (!connected)
                 
                 return;
-            SetVibration((float)(rand.NextDouble() - 0.5) * 4, (float)(rand.NextDouble() - 0.5) * 4);
- 
+            Console.WriteLine(GetJoystick(Thumbs.ThumbLeft));
         }
 
         //The deadzoning and ranging stuff
@@ -140,38 +135,45 @@ namespace XboneInterface
 
         public PointF GetJoystick(Thumbs thumb) //Returns a point (x and a y) that the specified joystick is located at.
         {
+            PointF buffer;
+            buffer = GetJoystickRaw(thumb);
+
+            buffer.X = buffer.X / xrange;
+            buffer.Y = buffer.Y / yrange;
+
+            if (Math.Abs(buffer.X) < deadzone)
+            {
+                buffer.X = 0;
+            }
+            Console.WriteLine(buffer.Y);
+            if (Math.Abs(buffer.Y) < deadzone)
+            {
+                buffer.Y = 0;
+            }
+
+            
+
+            return buffer;
+        }
+        public PointF GetJoystickRaw(Thumbs thumb)
+        {
             switch (thumb)
             {
                 case Thumbs.ThumbLeft:
-                    float xL = controller.GetState().Gamepad.LeftThumbX / xrange;
-                    float yL = controller.GetState().Gamepad.LeftThumbY / yrange;
+                    float xL = controller.GetState().Gamepad.LeftThumbX;
+                    float yL = controller.GetState().Gamepad.LeftThumbY;
 
-                    if (Math.Abs(xL) < deadzone)
-                    {
-                        xL = 0;
-                    }
-                    if (Math.Abs(yL) < deadzone)
-                    {
-                        yL = 0;
-                    }
                     return new PointF(xL, yL);
-                break;
+                    break;
+
                 case Thumbs.ThumbRight:
-                    float xR = controller.GetState().Gamepad.RightThumbX / xrange;
-                    float yR = controller.GetState().Gamepad.RightThumbY / yrange;
-                    
-                    if(Math.Abs(xR) < deadzone)
-                    {
-                        xR = 0;
-                    }
-                    if (Math.Abs(yR) < deadzone)
-                    {
-                        yR = 0;
-                    }
+                    float xR = controller.GetState().Gamepad.RightThumbX;
+                    float yR = controller.GetState().Gamepad.RightThumbY;
                     return new PointF(xR, yR);
-                break;
+                    break;
+                default:
+                    throw new System.ArgumentException("Passed value was not of either appropriate thumb type, could you perhaps have a special controller? Please file a issue report on https://github.com/CooperParlee/XbOneInterface.", "original");
             }
-            throw new System.ArgumentException("Passed value was not of either appropriate thumb type, could you perhaps have a special controller? Please file a issue report on https://github.com/CooperParlee/XbOneInterface.", "original");
         }
         public void SetVibration(float LeftMotor, float RightMotor) //Sets the controller vibration motor speeds
         {

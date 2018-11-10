@@ -48,7 +48,7 @@ namespace XboneInterface
 
         private Controller controller;
         private Gamepad gamepad;
-
+        private Random rand;
 
         //private List<KeyValuePair<Button, >>
         private List<KeyValuePair<Button, bool>> buttonstatearray;
@@ -56,6 +56,7 @@ namespace XboneInterface
         private float xrange = 32768.0f;
         private float yrange = 32768.0f;
         private float deadzone = 0.014f;
+
         private bool connected = false;
 
         public Interfacer(UserIndex id)
@@ -63,6 +64,7 @@ namespace XboneInterface
             controller = new Controller(id);
             gamepad = new Gamepad();
             connected = controller.IsConnected;
+            rand = new Random();
 
             buttonstatearray = new List<KeyValuePair<Button, bool>>();
 
@@ -93,7 +95,7 @@ namespace XboneInterface
             if (!connected)
                 
                 return;
-            
+            SetVibration((float)(rand.NextDouble() - 0.5) * 4, (float)(rand.NextDouble() - 0.5) * 4);
  
         }
 
@@ -133,7 +135,7 @@ namespace XboneInterface
             return m_TrigVal / 255.0f; // Ensures this function returns a value between 0 and 1
         }
 
-        public PointF GetAxis(Thumbs thumb)
+        public PointF GetJoystick(Thumbs thumb)
         {
             switch (thumb)
             {
@@ -177,7 +179,6 @@ namespace XboneInterface
             vibrationcharacteristics.RightMotorSpeed = (ushort)(RightMotor * 65535);
             controller.SetVibration(vibrationcharacteristics);
         }
-
         public bool IsButtonPressed(Button button)
         {
             var pair = buttoncongruency.Find(x => x.Key == button);

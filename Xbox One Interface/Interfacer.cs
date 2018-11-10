@@ -13,6 +13,7 @@ namespace XboneInterface
 {
     public class Interfacer
     {
+        //Enumerable types; use when calling buttons etc.
         public enum DPad
         {
             DPadUp,
@@ -20,7 +21,7 @@ namespace XboneInterface
             DPadLeft,
             DPadRight,
         }
-        public enum Button
+        public enum Button //Bipolar buttons -- the ones that go on and off :/
         {
             BumperLeft,
             BumperRight,
@@ -34,7 +35,7 @@ namespace XboneInterface
             Menu
         }
 
-        public enum Thumbs
+        public enum Thumbs //Joysticks
         {
             ThumbLeft,
             ThumbRight
@@ -99,11 +100,13 @@ namespace XboneInterface
  
         }
 
-        public void RedefineDeadzone(float deadzone)
+        //The deadzoning and ranging stuff
+        public void RedefineJoystickDeadzone(float deadzone)
         {
             this.deadzone = deadzone;
         }
-        public void RedefineXRange(int NewMax)
+
+        public void RedefineXRange(int NewMax) 
         {
             xrange = NewMax;
         }
@@ -111,7 +114,7 @@ namespace XboneInterface
         {
             yrange = NewMax;
         }
-        public bool GetDPad(DPad dir)
+        public bool GetDPad(DPad dir) //Returns if the specified DPad direction is being pushed.
         {
             string Data = controller.GetState().Gamepad.Buttons.ToString();
 
@@ -119,7 +122,7 @@ namespace XboneInterface
             return (Data == dir.ToString());
         }
 
-        public float GetTrigger(Triggers Trig)
+        public float GetTrigger(Triggers Trig) //Returns a floating-point number between 0.0 and 1.0.
         {
             int m_TrigVal;
             switch (Trig) {
@@ -135,7 +138,7 @@ namespace XboneInterface
             return m_TrigVal / 255.0f; // Ensures this function returns a value between 0 and 1
         }
 
-        public PointF GetJoystick(Thumbs thumb)
+        public PointF GetJoystick(Thumbs thumb) //Returns a point (x and a y) that the specified joystick is located at.
         {
             switch (thumb)
             {
@@ -170,7 +173,7 @@ namespace XboneInterface
             }
             throw new System.ArgumentException("Passed value was not of either appropriate thumb type, could you perhaps have a special controller? Please file a issue report on https://github.com/CooperParlee/XbOneInterface.", "original");
         }
-        public void SetVibration(float LeftMotor, float RightMotor)
+        public void SetVibration(float LeftMotor, float RightMotor) //Sets the controller vibration motor speeds
         {
             LeftMotor = Math.Max(-1, Math.Min(1, LeftMotor));
             RightMotor = Math.Max(-1, Math.Min(1, RightMotor));
@@ -179,7 +182,7 @@ namespace XboneInterface
             vibrationcharacteristics.RightMotorSpeed = (ushort)(RightMotor * 65535);
             controller.SetVibration(vibrationcharacteristics);
         }
-        public bool IsButtonPressed(Button button)
+        public bool IsButtonPressed(Button button) //Returns if sent button is pressed.
         {
             var pair = buttoncongruency.Find(x => x.Key == button);
 

@@ -24,6 +24,19 @@ namespace XboneInterface
             DPadLeft,
             DPadRight,
         }
+        public enum BatteryClass
+        {
+            Alkaline,
+            LiIon,
+            Nimh
+        }
+        public enum BatteryLevelArb
+        {
+            Low,
+            Med,
+            High,
+            Empty
+        }
         public enum Button //Bipolar buttons -- the ones that go on and off :/
         {
             BumperLeft,
@@ -92,7 +105,7 @@ namespace XboneInterface
             if (!connected)
                 
                 return;
-            Console.WriteLine(GetJoystick(Thumbs.ThumbLeft));
+            Console.WriteLine(GetBattery());
         }
 
         //The deadzoning and ranging stuff
@@ -179,9 +192,11 @@ namespace XboneInterface
         {
             LeftMotor = Math.Max(-1, Math.Min(1, LeftMotor));
             RightMotor = Math.Max(-1, Math.Min(1, RightMotor));
-            Vibration vibrationcharacteristics = new Vibration();
-            vibrationcharacteristics.LeftMotorSpeed = (ushort)(LeftMotor * 65535);
-            vibrationcharacteristics.RightMotorSpeed = (ushort)(RightMotor * 65535);
+            Vibration vibrationcharacteristics = new Vibration
+            {
+                LeftMotorSpeed = (ushort)(LeftMotor * 65535),
+                RightMotorSpeed = (ushort)(RightMotor * 65535)
+            };
             controller.SetVibration(vibrationcharacteristics);
         }
         public bool IsButtonPressed(Button button) //Returns if sent button is pressed.
@@ -193,8 +208,42 @@ namespace XboneInterface
             }
             return false;
         }
+        public bool HasBattery()
+        {
+            Console.WriteLine(controller.GetBatteryInformation(BatteryDeviceType.Gamepad).BatteryType);
+            switch (controller.GetBatteryInformation(BatteryDeviceType.Gamepad).BatteryType) {
 
-        
+                case BatteryType.Wired:
+                    return false;
+                    break;
+                case BatteryType.Disconnected:
+                    return false;
+                    break;
+                case BatteryType.Nimh:
+                    return true;
+                    break;
+                case BatteryType.Alkaline:
+                    return true;
+                    break;        
+            }
+            throw new System.ArgumentOutOfRangeException("Function was not able to locate a battery of an appropriate type. Please file a issue report on https://github.com/CooperParlee/XbOneInterface.", "original");
 
+        }
+        public BatteryLevelArb GetBattery()
+        {
+            switch (controller.GetBatteryInformation(BatteryDeviceType.Gamepad).BatteryLevel)
+            {
+                case BatteryLevel.Full:
+                    return BatteryLevelArb.High;
+                case BatteryLevel.Medium:
+                    return BatteryLevelArb.Med;
+                case BatteryLevel.Low:
+                    return BatteryLevelArb.Low;
+                case BatteryLevel.Empty:
+                    return BatteryLevelArb.Empty;
+            }
+
+            return 0.0f;
+        }
     }
 }
